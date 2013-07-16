@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if archives %}
+  {% for archive in archives %}
+  <archive class=post id=post{{ archive['id'] }}>
+    <div class="entry" id=entry{{ archive['id'] }}>
+        <a href='/post/{{ archive['id'] }}'>
+            <h1 class=title> {{ archive['title'] }} </h1>
+        </a>
+	<div class="meta">
+        <div class="date" style="background: url('{{ url_for('static', filename='img/date.png') }}') 0 center no-repeat;">
+	   <time datetime={{ archive['timestamp'] }} pubdate="" data-updated="true">{{ archive['timestamp']|datetimeformat('%B %dth') }}</time>
+        </div>
+	{% if archive['tags']|length != 0 %}
+        <div class="tags" style="background: url('{{ url_for('static', filename='img/tags.png') }}') 0 center no-repeat;">
+           {% for tag in archive['tags'] %}
+           <a href='javascript:show_tagged_posts("{{tag.name}}");'><tags tagname={{ tag.name }} pubdate="" data-updated="true">{{ tag.name }}</tags></a>, 
+           {% endfor %}
+        </div>
+	<div class="comments" style="background: url('{{ url_for('static', filename='img/comments.png') }}') 0 center no-repeat;">
+            <a href = '{{ url_for('show_post') }}/{{ archive['id'] }}#disqus_thread'>Comments</a>
+        </div>
+	{% endif %}
+	</div>
+    </div>
+  </archive>
+  {% endfor %}
+  {% else %}
+    <em>Unbelievable.  No posts here so far</em>
+  {% endif %}
+{% endblock %}

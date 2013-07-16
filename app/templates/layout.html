@@ -1,0 +1,70 @@
+<!doctype html>
+<title>carpedm20</title>
+<head>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+<body>
+<header class="inner">
+<div class="container">
+<h1><a href="/" style="background: url('{{ url_for('static', filename='img/carpedm20_1_web.png') }}') left center no-repeat; background-size: 130px">carpedm20</a></h1>
+<nav class="menu"><ul class="main">
+<li><a href="/about">About</a></li>
+<li><a href="/">Blog</a></li>
+<li class="archives"><a href="/archives">Archives</a></li>
+<li class="projects"><a href="/gallery">Projects</a></li>
+</ul>
+<select><option>Menu</option><option value="/">Blog</option><option value="/blog/archives">Archives</option></select></nav>
+<div class="menu right">
+    <form class="search right" action="http://google.com/search" method="get">
+        <input class="left" style="background-image:url({{ url_for('static', filename='img/search.png') }})"type="text" name="q" results="0">
+        <input type="hidden" name="q" value="site:carpedm20.com">
+    </form>
+    <div class="social right">
+        <a class="twitter" style="background-image:url({{ url_for('static', filename='img/twitter.png') }})" href="http://twitter.com/carpedm20" title="Twitter">Twitter</a>
+        <a class="github" style="background-image:url({{ url_for('static', filename='img/github.png') }})" href="https://github.com/carpedm20" title="GitHub">GitHub</a>        
+    </div>
+</div>
+</div>
+</header>
+<div id="content" class="inner">
+  <div class=metanav>
+  {% if not session.logged_in %}
+    <!--<a href="{{ url_for('login') }}">log in</a>-->
+  {% else %}
+    <a href="{{ url_for('logout') }}">Sign out</a>
+  {% endif %}
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class=flash>
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  {% block body %}{% endblock %}
+</div>
+<footer class="inner">
+{% if session.logged_in %}
+<p>© Copyright 2013 by Taehoon Kim // <a href="{{url_for('logout')}}">sign out</a></p>
+{% else %}
+<p>© Copyright 2013 by Taehoon Kim // <a href="{{url_for('login')}}">sign in</a></p>
+{% endif %}
+<p>Powered by Flask</p></br>
+</footer>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'carpedm20'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+    </script>
+    
+</body>

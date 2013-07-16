@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_post') }}" onSubmit="return check_tags(0,'');" method=post class=add-post>
+      <dl>
+        <dt>Title:
+        <dd><input type=text size=30 name=title value='{{title}}'>
+        <dt>Body:
+        <dd><textarea name=body rows=5 cols=70>{{body}}</textarea>
+        <dt>Tags:
+        <dd><input id=add_tag type=text size=30 name=tags value='{{title}}'>
+        <dt><input name=index type=hidden value='{{ index }}'>
+        <dt><input type=submit value=Post>
+      </dl>
+    </form>
+  {% endif %}
+  <script>
+  function check_tags(num,id) {
+  add_or_edit = num == 0 ? 'add' : 'edit';
+  var tag_text = document.getElementById(add_or_edit+'_tag'+id).value;
+  var matchArray = tag_text.match(/[^,\sA-Za-z0-9]+/);
+  if (matchArray.length == 0)
+      return true;
+  else
+      alert("You only can use numbers and alphabets in Tags!");
+      return false;
+  }
+
+  function edit_post(id, title, body, tags)
+  {
+  var matchArray = tags.match(/'[\sA-Za-z0-9]+'/g);
+  if(matchArray==null) matchArray='';
+  //alert(matchArray.toString().replace(/'/gi,'"')); 
+  $("#entry"+id).replaceWith($("<form action={{ url_for('edit_post') }} onSubmit='return check_tags(1,"+id+");'  method=post class=entry_edit><dl><dt>Title:<dd><input type=text size=30 name=title value='"+title+"'><dt>Body:<dt><textarea name=body id='textarea"+id+"' row=15 cols=70>"+body+"</textarea><dt>Tags:<dd><input id=edit_tag"+id+" type=text size=30 name=tags value='"+matchArray.toString().replace(/'/gi,'')+"'><dt><input name=id type=hidden value='"+id+"'><dt><input name=index type=hidden value='{{ index }}'><input type=submit value=edit></dl></form>"));
+  $("#edit_link"+id).text("");
+  }
+
+function post_to_url(path, params, method) {
+    method = method || "post"; // Set method to post by default, if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+
+        form.appendChild(hiddenField);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+  function delete_post(id)
+  {
+    post_to_url("{{ url_for('delete_post') }}", {"id":id});
+  }
+
+  function show_tagged_posts(name)
+  {
+    post_to_url("{{ url_for('show_tagged_posts') }}", {"name":name});
+  }
+  </script>
+  {% if posts %}
+  {% for post in posts %}
+  <article class=post id=post{{ post.id }}>
+    <h1 class="title"><a href = '{{ url_for('show_post') }}/{{ post.id}}'>{{ post.title }}</a></h1>
+    <div class="entry" id=entry{{ post.id }}>
+    {% if post.coded_body == '' %}
+	{{ post.body | markdown }}
+    {% else %}
+	{{ post.coded_body | markdown }}
+    {% endif %}
+    </div>
+    {% if session.logged_in %}
+    <div class="edit" id=edit{{ post.id }}>
+	<a id=edit_link{{ post.id }} href='javascript:edit_post("{{post.id}}","{{post.title}}","{{post.body | replace("\n", "\\n") | replace('\"','\\"')}}","{{post.tags}}");'>edit</a> / 
+	<a id=delete_link{{ post.id }} href='javascript:delete_post("{{post.id}}");'>delete</a>
+    </div>
+    {% endif %}
+    <div class="meta">
+        <div class="date" style="background: url('{{ url_for('static', filename='img/date.png') }}') 0 center no-repeat;">
+	    <time datetime={{ post.timestamp }} pubdate="" data-updated="true">{{ post.timestamp|datetimeformat }}</time>
+	</div>
+	{% if post.tags|length != 0 %}
+        <div class="tags" style="background: url('{{ url_for('static', filename='img/tags.png') }}') 0 center no-repeat;">
+           {% for tag in post.tags %}
+           <a href='javascript:show_tagged_posts("{{tag.name}}");'><tags tagname={{ tag.name }} pubdate="" data-updated="true">{{ tag.name }}</tags></a>, 
+           {% endfor %}
+        </div>
+	<div class="comments" style="background: url('{{ url_for('static', filename='img/comments.png') }}') 0 center no-repeat;">
+	    <a href = '{{ url_for('show_post') }}/{{ post.id}}#disqus_thread'>Comments</a>
+	</div>
+	{% endif %}
+    </div>
+  </article>
+  {% endfor %}
+  {% else %}
+    <em>Unbelievable.  No posts here so far</em>
+  {% endif %}
+<nav id="pagenavi">
+    {% if index != 1 %}
+    <a href="/index/{{ index-1 }}" style="background: url('{{ url_for('static', filename='img/back.png') }}') 0 center no-repeat;" class="prev">Prev</a>
+    {% endif %}
+    {% if has_next == 'True' %}
+    <a href="/index/{{ index+1 }}" style="background: url('{{ url_for('static', filename='img/more.png') }}') right center no-repeat;" class="next">Next</a>
+    {% endif %}
+    <a href="/archives" class="center">Blog Archives</a>
+</nav>
+{% endblock %}
