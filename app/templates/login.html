@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="login center">
+  <h1>Sign in</h1>
+  </br>
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('login') }}" method=post>
+    <div>
+      <p>Username or Email</p>
+      <input type=text name=username>
+    </div>
+    <div>
+      <p>Password <a href="javascript:alert('No you don\'t :)');">(forgot password)</a></p>
+      <input type=password name=password>
+      </br></br>
+    </div>
+      <input class="btn" style="background: url('{{ url_for('static', filename='img/login.png') }}') no-repeat scroll 0 0 transparent; border:0; cursor: pointer; background-size: 130px; width: 137px; height: 60px; margin-left:22px" type=submit value=>
+    </dl>
+  </form>
+</div>
+{% endblock %}
