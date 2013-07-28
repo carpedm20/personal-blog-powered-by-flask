@@ -7,6 +7,7 @@ from models import Tag
 from models import Comment
 from datetime import datetime
 from config import POSTS_PER_PAGE
+from sqlalchemy import desc
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -19,8 +20,8 @@ import re
 @app.route('/index/<int:page>', methods = ['GET', 'POST'])
 
 def show_posts(page = 1):
-    posts = Post.query.paginate(page, POSTS_PER_PAGE, False).items
-    has_next = Post.query.paginate(page, POSTS_PER_PAGE, False).has_next
+    posts = Post.query.order_by(desc(Post.timestamp)).paginate(page, POSTS_PER_PAGE, False).items
+    has_next = Post.query.order_by(desc(Post.timestamp)).paginate(page, POSTS_PER_PAGE, False).has_next
     """
     entries = []
 
@@ -48,7 +49,7 @@ def show_posts(page = 1):
 #@app.route('/tag')
 @app.route('/tag', methods=['POST'])
 def show_tagged_posts():
-    posts = db.session.query(Post).filter(Post.tags.any(name=request.form['name'])).all()
+    posts = db.session.query(Post).order_by(desc(Post.timestamp)).filter(Post.tags.any(name=request.form['name'])).all()
     #posts = db.session.query(Post).filter(Post.tags.any(name=name)).all()
     return render_template('show_posts.html', posts=posts, index=1)
 
@@ -61,7 +62,7 @@ def show_post(id = 1):
 
 @app.route('/archives', methods = ['GET','POST'])
 def show_archives():
-    posts = Post.query.all()
+    posts = Post.query.order_by(desc(Post.timestamp)).all()
 
     archives=[]
     for post in posts:
@@ -82,6 +83,10 @@ def show_archives():
 def show_about():
     return render_template('about.html')
 
+@app.route('/projects', methods = ['GET','POST'])
+def show_projects():
+    return render_template('projects.html')
+
 @app.route('/gallery', methods = ['GET','POST'])
 def show_gallery():
     return render_template('gallery.php')
@@ -89,8 +94,8 @@ def show_gallery():
 @app.route('/add', methods=['POST'])
 def add_post():
     page = int(request.form['index'])
-    posts = Post.query.paginate(page, POSTS_PER_PAGE, False).items
-    has_next = Post.query.paginate(page, POSTS_PER_PAGE, False).has_next
+    posts = Post.query.order_by(desc(Post.timestamp)).paginate(page, POSTS_PER_PAGE, False).items
+    has_next = Post.query.order_by(desc(Post.timestamp)).paginate(page, POSTS_PER_PAGE, False).has_next
 
     if request.form['title'] == "" or request.form['body'] == "":
         flash('You have to fill all the inputs!','error')

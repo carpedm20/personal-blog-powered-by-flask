@@ -50,6 +50,12 @@ font-size: 48px;
 line-height: 54px;
 }
 
+.about .date{
+margin-left: -140px;
+float: left;
+line-height: 52px;
+}
+
 .about h2{
 font-size: 28px;
 line-height: 52px;
