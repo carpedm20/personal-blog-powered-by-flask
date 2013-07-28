@@ -5,7 +5,10 @@ Flask-WhooshAlchemy==0.55a
 Jinja2==2.7
 Markdown==2.3.1
 MarkupSafe==0.18
+<<<<<<< HEAD
 Pygments==1.6
+=======
+>>>>>>> 0e2b634095913b39c1197a2f19c53fbe750c7899
 SQLAlchemy==0.7.9
 Tempita==0.5.1
 Werkzeug==0.9.1

@@ -94,10 +94,17 @@ function post_to_url(path, params, method) {
            <a href='javascript:show_tagged_posts("{{tag.name}}");'><tags tagname={{ tag.name }} pubdate="" data-updated="true">{{ tag.name }}</tags></a>, 
            {% endfor %}
         </div>
+<<<<<<< HEAD
 	{% endif %}
 	<div class="comments" style="background: url('{{ url_for('static', filename='img/comments.png') }}') 0 center no-repeat;">
 	    <a href = '{{ url_for('show_post') }}/{{ post.id}}#disqus_thread'>Comments</a>
 	</div>
+=======
+	<div class="comments" style="background: url('{{ url_for('static', filename='img/comments.png') }}') 0 center no-repeat;">
+	    <a href = '{{ url_for('show_post') }}/{{ post.id}}#disqus_thread'>Comments</a>
+	</div>
+	{% endif %}
+>>>>>>> 0e2b634095913b39c1197a2f19c53fbe750c7899
     </div>
   </article>
   {% endfor %}
